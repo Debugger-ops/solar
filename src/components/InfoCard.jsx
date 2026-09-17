@@ -1,4 +1,4 @@
-import { PLANETS, SUN, factsFor } from '../data/planets'
+import { factsFor, findBody, moonFactsFor } from '../data/planets'
 import { useSolarStore } from '../store/useOrreryStore'
 
 export default function InfoCard() {
@@ -7,15 +7,16 @@ export default function InfoCard() {
   if (!selected) {
     return (
       <div className="card">
-        <p className="hint-inline">Click the sun or any planet to see its numbers.</p>
+        <p className="hint-inline">Click the sun, any planet, or a moon to see its numbers.</p>
       </div>
     )
   }
 
-  const body = selected === 'Sun' ? SUN : PLANETS.find((p) => p.name === selected)
-  if (!body) return null
+  const found = findBody(selected)
+  if (!found) return null
+  const { kind, body, parent } = found
 
-  const facts = selected === 'Sun' ? body.facts : factsFor(body)
+  const facts = kind === 'sun' ? body.facts : kind === 'moon' ? moonFactsFor(body, parent) : factsFor(body)
   const swatch = '#' + body.color.toString(16).padStart(6, '0')
 
   return (
@@ -23,6 +24,7 @@ export default function InfoCard() {
       <div className="name">
         <span className="swatch" style={{ background: swatch }} />
         <span>{body.name}</span>
+        {kind === 'moon' && <span className="dwarf-badge">moon</span>}
       </div>
       <dl>
         {facts.map(([k, v]) => (

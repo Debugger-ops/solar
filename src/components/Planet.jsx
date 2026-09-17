@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import {
   bandedTexture,
   earthTexture,
+  earthNightTexture,
   mercuryTexture,
   venusTexture,
   marsTexture,
@@ -12,13 +13,20 @@ import {
   plutoTexture,
 } from '../three/textures'
 import { useSolarStore } from '../store/useOrreryStore'
+import { registerBody } from '../three/bodyRegistry'
 import Rings from './Rings'
 import OrbitPath from './OrbitPath'
+import Moon from './Moon'
+import Atmosphere from './Atmosphere'
+import EarthMaterial from './EarthMaterial'
 
 // One planet: an orbiting holder (the ellipse math lives here), a spinning
-// mesh inside it, optional rings, and an HTML label that stays anchored to
-// its 3D position. To add a moon, nest a second, smaller orbiting group
-// inside `holderRef`'s children the same way this nests the mesh + rings.
+// mesh inside it, optional rings/atmosphere/moons, and an HTML label that
+// stays anchored to its 3D position. The whole thing sits inside two static
+// rotation groups - longitude of ascending node, then inclination - so the
+// orbit plane itself is tilted to the body's real inclination instead of
+// every orbit sitting flat on y=0. To add a moon, push an entry onto that
+// planet's `moonBodies` array in data/planets.js; Moon.jsx handles the rest.
 export default function Planet({ data }) {
   const holderRef = useRef()
   const meshRef = useRef()
@@ -58,6 +66,10 @@ export default function Planet({ data }) {
     }
   }, [data.map, data.color, data.spot])
 
+  // Earth alone uses a real sun-angle day/night shader instead of the
+  // scene's ambient/point light, so it needs a second, night-side map.
+  const nightTexture = useMemo(() => (data.map === 'earth' ? earthNightTexture() : null), [data.map])
+
   useFrame((_, delta) => {
     if (running) {
       angleRef.current += ((delta * daysPerSecond) / data.periodDays) * Math.PI * 2
@@ -71,38 +83,59 @@ export default function Planet({ data }) {
   const isSelected = selected === data.name
 
   return (
-    <>
-      <OrbitPath a={a} ecc={data.ecc} visible={showOrbits} />
-      <group ref={holderRef}>
-        <mesh
-          ref={meshRef}
-          rotation={[0, 0, THREE.MathUtils.degToRad(data.tiltDeg)]}
-          onClick={(e) => {
-            e.stopPropagation()
-            select(data.name)
+    <group rotation={[0, THREE.MathUtils.degToRad(data.lonAscNodeDeg || 0), 0]}>
+      <group rotation={[THREE.MathUtils.degToRad(data.inclDeg || 0), 0, 0]}>
+        <OrbitPath a={a} ecc={data.ecc} visible={showOrbits} />
+        <group
+          ref={(node) => {
+            holderRef.current = node
+            registerBody(data.name, node)
           }}
         >
-          <sphereGeometry args={[data.radius, 32, 32]} />
-          {texture ? (
-            <meshStandardMaterial map={texture} roughness={0.85} metalness={0.05} />
-          ) : (
-            <meshStandardMaterial color={data.color} roughness={0.85} metalness={0.05} />
+          <mesh
+            ref={meshRef}
+            rotation={[0, 0, THREE.MathUtils.degToRad(data.tiltDeg)]}
+            onClick={(e) => {
+              e.stopPropagation()
+              select(data.name)
+            }}
+          >
+            <sphereGeometry args={[data.radius, 32, 32]} />
+            {data.map === 'earth' ? (
+              <EarthMaterial dayMap={texture} nightMap={nightTexture} />
+            ) : texture ? (
+              <meshStandardMaterial map={texture} roughness={0.85} metalness={0.05} />
+            ) : (
+              <meshStandardMaterial color={data.color} roughness={0.85} metalness={0.05} />
+            )}
+          </mesh>
+
+          {data.rings && (
+            <Rings innerRadius={data.radius * 1.4} outerRadius={data.radius * 2.3} tiltDeg={data.tiltDeg} />
           )}
-        </mesh>
 
-        {data.rings && (
-          <Rings innerRadius={data.radius * 1.4} outerRadius={data.radius * 2.3} tiltDeg={data.tiltDeg} />
-        )}
+          {data.atmosphereGlow && (
+            <Atmosphere
+              radius={data.radius}
+              color={data.atmosphereGlow.color}
+              intensity={data.atmosphereGlow.intensity}
+            />
+          )}
 
-        {showLabels && (
-          <Html position={[0, data.radius * 1.6 + 0.3, 0]} center distanceFactor={40} occlude>
-            <div className={`planet-label${isSelected ? ' active' : ''}`}>
-              <span>{data.name}</span>
-              {data.dwarf && <span className="dwarf-badge">dwarf</span>}
-            </div>
-          </Html>
-        )}
+          {data.moonBodies?.map((moon) => (
+            <Moon key={moon.name} data={moon} />
+          ))}
+
+          {showLabels && (
+            <Html position={[0, data.radius * 1.6 + 0.3, 0]} center distanceFactor={40} occlude>
+              <div className={`planet-label${isSelected ? ' active' : ''}`}>
+                <span>{data.name}</span>
+                {data.dwarf && <span className="dwarf-badge">dwarf</span>}
+              </div>
+            </Html>
+          )}
+        </group>
       </group>
-    </>
+    </group>
   )
 }

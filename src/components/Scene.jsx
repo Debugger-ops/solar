@@ -1,13 +1,17 @@
+import { useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Stars } from '@react-three/drei'
 import Sun from './Sun'
 import Planet from './Planet'
 import AsteroidBelt from './AsteroidBelt'
+import CameraRig from './CameraRig'
+import PostFX from './PostFX'
 import { PLANETS, SUN } from '../data/planets'
 import { useSolarStore } from '../store/useOrreryStore'
 
 export default function Scene() {
   const select = useSolarStore((s) => s.select)
+  const controlsRef = useRef()
 
   return (
     <Canvas
@@ -29,13 +33,16 @@ export default function Scene() {
       ))}
 
       <OrbitControls
+        ref={controlsRef}
         enableDamping
         dampingFactor={0.07}
-        minDistance={12}
-        maxDistance={240}
+        minDistance={0.5}
+        maxDistance={260}
         enablePan={false}
         target={[0, 0, 0]}
       />
+      <CameraRig controlsRef={controlsRef} />
+      <PostFX />
     </Canvas>
   )
 }

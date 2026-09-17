@@ -155,6 +155,35 @@ export function earthTexture() {
   return toCanvasTexture(c)
 }
 
+// --- Earth's night side: near-black with city-light clusters seeded from
+// the same landmass noise as earthTexture(), so lights only show up on
+// "land". Blended in by EarthMaterial.jsx based on sun angle. ---
+export function earthNightTexture() {
+  const W = 256
+  const H = 128
+  const [c, ctx] = makeCanvas(W, H)
+  const img = ctx.createImageData(W, H)
+  for (let i = 0; i < img.data.length; i += 4) {
+    img.data[i] = 2
+    img.data[i + 1] = 2
+    img.data[i + 2] = 6
+    img.data[i + 3] = 255
+  }
+  ctx.putImageData(img, 0, 0)
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const land = fbm(x * 0.045, y * 0.045, 5, 14)
+      if (land <= 0.58) continue
+      const cluster = fbm(x * 0.15 + 300, y * 0.15 + 300, 3, 88)
+      if (cluster <= 0.6) continue
+      const b = Math.min(1, (cluster - 0.6) * 3)
+      ctx.fillStyle = `rgba(255, ${190 + Math.floor(b * 40)}, ${110 + Math.floor(b * 40)}, ${0.45 + b * 0.5})`
+      ctx.fillRect(x, y, 1, 1)
+    }
+  }
+  return toCanvasTexture(c)
+}
+
 // --- Mercury: cratered rocky surface, no atmosphere to soften anything. ---
 export function mercuryTexture(baseColor = 0x9c948a) {
   const W = 256

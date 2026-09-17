@@ -6,7 +6,7 @@ export default function Hud() {
         <h1>Solar</h1>
         <p>The eight planets on their real orbital periods and eccentricities. Distances and sizes are compressed to fit the screen.</p>
       </div>
-      <div className="hint">drag to orbit &middot; scroll to zoom &middot; click a body for its numbers</div>
+      <div className="hint">drag to orbit &middot; scroll to zoom &middot; click a body to fly in &middot; click empty space to back out</div>
     </>
   )
 }

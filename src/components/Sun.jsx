@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { sunTexture, glowTexture, coronaTexture } from '../three/textures'
 import { useSolarStore } from '../store/useOrreryStore'
+import { registerBody } from '../three/bodyRegistry'
 
 export default function Sun({ radius = 6 }) {
   const meshRef = useRef()
@@ -22,7 +23,7 @@ export default function Sun({ radius = 6 }) {
   })
 
   return (
-    <group>
+    <group ref={(node) => registerBody('Sun', node)}>
       <pointLight color={0xfff2d6} intensity={6.5} decay={0} />
       <mesh ref={meshRef} onClick={(e) => { e.stopPropagation(); select('Sun') }}>
         <sphereGeometry args={[radius, 48, 48]} />
