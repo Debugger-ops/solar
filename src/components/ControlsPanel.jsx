@@ -1,17 +1,17 @@
-import { useOrreryStore } from '../store/useOrreryStore'
+import { useSolarStore } from '../store/useSolarStore'
 
 export default function ControlsPanel() {
-  const daysPerSecond = useOrreryStore((s) => s.daysPerSecond)
-  const running = useOrreryStore((s) => s.running)
-  const showOrbits = useOrreryStore((s) => s.showOrbits)
-  const showLabels = useOrreryStore((s) => s.showLabels)
-  const setSpeed = useOrreryStore((s) => s.setSpeed)
-  const toggleRunning = useOrreryStore((s) => s.toggleRunning)
-  const toggleOrbits = useOrreryStore((s) => s.toggleOrbits)
-  const toggleLabels = useOrreryStore((s) => s.toggleLabels)
+  const daysPerSecond = useSolarStore((s) => s.daysPerSecond)
+  const running = useSolarStore((s) => s.running)
+  const showOrbits = useSolarStore((s) => s.showOrbits)
+  const showLabels = useSolarStore((s) => s.showLabels)
+  const setSpeed = useSolarStore((s) => s.setSpeed)
+  const toggleRunning = useSolarStore((s) => s.toggleRunning)
+  const toggleOrbits = useSolarStore((s) => s.toggleOrbits)
+  const toggleLabels = useSolarStore((s) => s.toggleLabels)
 
   return (
-    <div className="controls" role="group" aria-label="Orrery controls">
+    <div className="controls" role="group" aria-label="Solar controls">
       <h2>Mechanism</h2>
 
       <div className="row">

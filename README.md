@@ -1,4 +1,4 @@
-# Orrery
+# Solar
 
 A scaled 3D solar system, built with React + [react-three-fiber](https://docs.pmnd.rs/react-three-fiber) (Three.js) and [drei](https://github.com/pmndrs/drei), scaffolded with Vite.
 
@@ -31,7 +31,7 @@ npm run lint      # oxlint
 src/
   data/planets.js        Real orbital data (distance, period, eccentricity, radius, color, notes)
   three/textures.js       Procedural canvas textures (banded gas giants, Earth, Saturn's rings, sun, glow) — no image assets
-  store/useOrreryStore.js Zustand store: simulation speed, play/pause, orbit/label visibility, selected body
+  store/useSolarStore.js Zustand store: simulation speed, play/pause, orbit/label visibility, selected body
   components/
     Scene.jsx             The <Canvas> — camera, lights, starfield, OrbitControls, maps over PLANETS
     Sun.jsx                Sun mesh + point light + glow sprite
@@ -50,7 +50,7 @@ src/
 A few common additions, and where they'd go:
 
 - **Add a body** (a ninth planet, a dwarf planet, a moon): add an entry to `PLANETS` in `src/data/planets.js`. `Scene.jsx` maps over that array automatically, so a new top-level body needs nothing else. A moon is easiest as a small `Planet`-like mesh nested *inside* an existing planet's `<group ref={holderRef}>` in `Planet.jsx`, orbiting the planet the same way planets orbit the sun.
-- **New controls** (e.g. a "focus camera on selected body" button, a texture-quality toggle): add state + an action to `useOrreryStore.js`, then read it wherever it's needed — no prop drilling required.
+- **New controls** (e.g. a "focus camera on selected body" button, a texture-quality toggle): add state + an action to `useSolarStore.js`, then read it wherever it's needed — no prop drilling required.
 - **Real planet textures**: swap the procedural textures in `three/textures.js` for `useLoader(TextureLoader, url)` calls (drei also has a `useTexture` hook that does this for you).
 - **Camera fly-to on click**: in `Planet.jsx`'s `onClick`, in addition to `select(data.name)`, you could store the clicked body's live position and animate `camera.position`/`controls.target` toward it in a `useFrame` in `Scene.jsx`.
 - **Moons, comets, spacecraft trajectories**: follow the `Planet.jsx` pattern — a holder `group` for the orbit position, a spinning mesh inside it — since that's the whole trick behind every orbiting body here.

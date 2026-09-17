@@ -3,7 +3,7 @@
 // without prop-drilling. Add new controls here as the project grows.
 import { create } from 'zustand'
 
-export const useOrreryStore = create((set) => ({
+export const useSolarStore = create((set) => ({
   daysPerSecond: 20,
   running: true,
   showOrbits: true,

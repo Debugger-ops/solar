@@ -2,13 +2,13 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { sunTexture, glowTexture } from '../three/textures'
-import { useOrreryStore } from '../store/useOrreryStore'
+import { useSolarStore } from '../store/useSolarStore'
 
 export default function Sun({ radius = 6 }) {
   const meshRef = useRef()
   const texture = useMemo(() => sunTexture(), [])
   const glow = useMemo(() => glowTexture(0xffcf6b), [])
-  const select = useOrreryStore((s) => s.select)
+  const select = useSolarStore((s) => s.select)
 
   useFrame((_, delta) => {
     if (meshRef.current) meshRef.current.rotation.y += delta * 0.05

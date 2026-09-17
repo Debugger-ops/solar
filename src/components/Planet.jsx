@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { bandedTexture, earthTexture } from '../three/textures'
-import { useOrreryStore } from '../store/useOrreryStore'
+import { useSolarStore } from '../store/useSolarStore'
 import Rings from './Rings'
 import OrbitPath from './OrbitPath'
 
@@ -16,12 +16,12 @@ export default function Planet({ data }) {
   const meshRef = useRef()
   const angleRef = useRef(Math.random() * Math.PI * 2)
 
-  const daysPerSecond = useOrreryStore((s) => s.daysPerSecond)
-  const running = useOrreryStore((s) => s.running)
-  const showOrbits = useOrreryStore((s) => s.showOrbits)
-  const showLabels = useOrreryStore((s) => s.showLabels)
-  const select = useOrreryStore((s) => s.select)
-  const selected = useOrreryStore((s) => s.selected)
+  const daysPerSecond = useSolarStore((s) => s.daysPerSecond)
+  const running = useSolarStore((s) => s.running)
+  const showOrbits = useSolarStore((s) => s.showOrbits)
+  const showLabels = useSolarStore((s) => s.showLabels)
+  const select = useSolarStore((s) => s.select)
+  const selected = useSolarStore((s) => s.selected)
 
   const a = data.distanceDisplay
   const b = useMemo(() => a * Math.sqrt(1 - data.ecc * data.ecc), [a, data.ecc])

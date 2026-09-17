@@ -1,8 +1,8 @@
 import { PLANETS, SUN, factsFor } from '../data/planets'
-import { useOrreryStore } from '../store/useOrreryStore'
+import { useSolarStore } from '../store/useSolarStore'
 
 export default function InfoCard() {
-  const selected = useOrreryStore((s) => s.selected)
+  const selected = useSolarStore((s) => s.selected)
 
   if (!selected) {
     return (
