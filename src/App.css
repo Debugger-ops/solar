@@ -297,6 +297,22 @@ input[type='range']::-moz-range-thumb {
   background: var(--gold);
 }
 
+.dwarf-badge {
+  font-size: 8px;
+  text-transform: lowercase;
+  letter-spacing: 0.03em;
+  font-style: italic;
+  color: var(--ink-dim);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 0 5px;
+  line-height: 1.5;
+}
+.planet-label.active .dwarf-badge {
+  color: var(--gold-dim);
+  border-color: rgba(255, 207, 107, 0.35);
+}
+
 @media (max-width: 640px) {
   .card {
     left: 16px;

@@ -1,11 +1,12 @@
-// Real relative orbital data for the eight planets. Distances and radii are
-// compressed (see distanceDisplay / radius) so the whole system fits on
-// screen, but periods, eccentricities and relative sizes are all accurate.
+// Real relative orbital data for the eight planets (plus Pluto, kept as a
+// dwarf planet). Distances and radii are compressed (see distanceDisplay /
+// radius) so the whole system fits on screen, but periods, eccentricities
+// and relative sizes are all accurate.
 //
 // Want to add a body? Push a new object here — Scene.jsx maps over this
 // array automatically, so a new planet (or a dwarf planet, or a moon nested
 // under a planet) just needs an entry and, if it should look different, a
-// texture in `three/textures.js`.
+// `map` naming a texture generator in `three/textures.js`.
 
 export const SUN = {
   name: 'Sun',
@@ -33,6 +34,7 @@ export const PLANETS = [
     spin: 1.6,
     earthRadii: 0.38,
     note: 'The fastest and most eccentric orbit of the eight.',
+    map: 'mercury',
   },
   {
     name: 'Venus',
@@ -46,6 +48,7 @@ export const PLANETS = [
     spin: -0.4,
     earthRadii: 0.95,
     note: "Spins backwards, so slowly that its day outlasts its year.",
+    map: 'venus',
   },
   {
     name: 'Earth',
@@ -73,6 +76,7 @@ export const PLANETS = [
     spin: 1.9,
     earthRadii: 0.53,
     note: "A visible tilt close to Earth's gives it real seasons.",
+    map: 'mars',
   },
   {
     name: 'Jupiter',
@@ -87,6 +91,7 @@ export const PLANETS = [
     earthRadii: 11.2,
     note: 'More massive than every other planet combined.',
     map: 'bands',
+    spot: true,
   },
   {
     name: 'Saturn',
@@ -115,6 +120,7 @@ export const PLANETS = [
     spin: -2.6,
     earthRadii: 4.0,
     note: 'Tipped almost onto its side - it rolls around the sun rather than spinning upright.',
+    map: 'ice',
   },
   {
     name: 'Neptune',
@@ -128,15 +134,34 @@ export const PLANETS = [
     spin: 2.4,
     earthRadii: 3.88,
     note: 'One orbit takes 165 Earth years - it has completed one since its 1846 discovery.',
+    map: 'ice',
+  },
+  {
+    name: 'Pluto',
+    color: 0xcbb69c,
+    distanceAU: 39.48,
+    distanceDisplay: 90,
+    periodDays: 90560,
+    ecc: 0.248,
+    radius: 0.32,
+    tiltDeg: 122.5,
+    spin: -0.5,
+    earthRadii: 0.186,
+    dwarf: true,
+    map: 'pluto',
+    note: 'Reclassified as a dwarf planet in 2006 - its largest moon, Charon, is over half its own size.',
   },
 ]
 
 export function factsFor(planet) {
   const years = planet.periodDays / 365.25
-  return [
+  const facts = []
+  if (planet.dwarf) facts.push(['Classification', 'Dwarf planet'])
+  facts.push(
     ['Distance from sun', `${planet.distanceAU} AU`],
     ['Orbital period', years >= 1 ? `${years.toFixed(1)} years` : `${planet.periodDays.toFixed(0)} days`],
     ['Orbit eccentricity', planet.ecc.toFixed(3)],
     ['Radius', `${planet.earthRadii.toFixed(2)} × Earth`],
-  ]
+  )
+  return facts
 }

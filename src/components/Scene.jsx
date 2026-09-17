@@ -4,7 +4,7 @@ import Sun from './Sun'
 import Planet from './Planet'
 import AsteroidBelt from './AsteroidBelt'
 import { PLANETS, SUN } from '../data/planets'
-import { useSolarStore } from '../store/useSolarStore'
+import { useSolarStore } from '../store/useOrreryStore'
 
 export default function Scene() {
   const select = useSolarStore((s) => s.select)

@@ -2,8 +2,16 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
-import { bandedTexture, earthTexture } from '../three/textures'
-import { useSolarStore } from '../store/useSolarStore'
+import {
+  bandedTexture,
+  earthTexture,
+  mercuryTexture,
+  venusTexture,
+  marsTexture,
+  iceGiantTexture,
+  plutoTexture,
+} from '../three/textures'
+import { useSolarStore } from '../store/useOrreryStore'
 import Rings from './Rings'
 import OrbitPath from './OrbitPath'
 
@@ -27,11 +35,28 @@ export default function Planet({ data }) {
   const b = useMemo(() => a * Math.sqrt(1 - data.ecc * data.ecc), [a, data.ecc])
   const focusOffset = a * data.ecc
 
+  // Every body gets a procedural, non-repeating surface generated from its
+  // `map` field - see three/textures.js for what each one draws.
   const texture = useMemo(() => {
-    if (data.map === 'earth') return earthTexture()
-    if (data.map === 'bands') return bandedTexture(data.color, 0xffffff, 10)
-    return null
-  }, [data.map, data.color])
+    switch (data.map) {
+      case 'earth':
+        return earthTexture()
+      case 'mercury':
+        return mercuryTexture(data.color)
+      case 'venus':
+        return venusTexture(data.color)
+      case 'mars':
+        return marsTexture(data.color)
+      case 'ice':
+        return iceGiantTexture(data.color)
+      case 'pluto':
+        return plutoTexture(data.color)
+      case 'bands':
+        return bandedTexture(data.color, 0xffffff, 10, data.spot)
+      default:
+        return null
+    }
+  }, [data.map, data.color, data.spot])
 
   useFrame((_, delta) => {
     if (running) {
@@ -71,7 +96,10 @@ export default function Planet({ data }) {
 
         {showLabels && (
           <Html position={[0, data.radius * 1.6 + 0.3, 0]} center distanceFactor={40} occlude>
-            <div className={`planet-label${isSelected ? ' active' : ''}`}>{data.name}</div>
+            <div className={`planet-label${isSelected ? ' active' : ''}`}>
+              <span>{data.name}</span>
+              {data.dwarf && <span className="dwarf-badge">dwarf</span>}
+            </div>
           </Html>
         )}
       </group>

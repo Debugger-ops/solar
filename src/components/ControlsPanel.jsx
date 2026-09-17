@@ -1,4 +1,4 @@
-import { useSolarStore } from '../store/useSolarStore'
+import { useSolarStore } from '../store/useOrreryStore'
 
 export default function ControlsPanel() {
   const daysPerSecond = useSolarStore((s) => s.daysPerSecond)
